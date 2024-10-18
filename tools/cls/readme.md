@@ -100,27 +100,25 @@ See full `predict` mode details in the [Predict](../modes/predict.md) page.
 
 Export a YOLO11n-cls model to a different format like ONNX, CoreML, etc.
 
-!!! example
+Python命令：
 
-    === "Python"
+```python
+from ultralytics import YOLO
 
-        ```python
-        from ultralytics import YOLO
+# Load a model
+model = YOLO("yolo11n-cls.pt")  # load an official model
+model = YOLO("path/to/best.pt")  # load a custom trained model
 
-        # Load a model
-        model = YOLO("yolo11n-cls.pt")  # load an official model
-        model = YOLO("path/to/best.pt")  # load a custom trained model
+# Export the model
+model.export(format="onnx")
+```
 
-        # Export the model
-        model.export(format="onnx")
-        ```
+CLI命令：
 
-    === "CLI"
-
-        ```bash
-        yolo export model=yolo11n-cls.pt format=onnx  # export official model
-        yolo export model=path/to/best.pt format=onnx  # export custom trained model
-        ```
+```bash
+yolo export model=yolo11n-cls.pt format=onnx  # export official model
+yolo export model=path/to/best.pt format=onnx  # export custom trained model
+```
 
 Available YOLO11-cls export formats are in the table below. You can export to any format using the `format` argument, i.e. `format='onnx'` or `format='engine'`. You can predict or validate directly on exported models, i.e. `yolo predict model=yolo11n-cls.onnx`. Usage examples are shown for your model after export completes.
 
