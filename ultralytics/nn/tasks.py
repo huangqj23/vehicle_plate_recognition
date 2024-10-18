@@ -1076,12 +1076,15 @@ def yaml_model_load(path):
     """Load a YOLOv8 model from a YAML file."""
     path = Path(path)
     if path.stem in (f"yolov{d}{x}6" for x in "nsmlx" for d in (5, 8)):
-        new_stem = re.sub(r"(\d+)([nslmx])6(.+)?$", r"\1\2-p6\3", path.stem)
+        # 修改文件路径的 stem（即文件名，不包括扩展名），将其格式从 "{数字}{字母}6{其他内容}" 改为 "{数字}{字母}-p6{其他内容}"。
+        new_stem = re.sub(r"(\d+)([nslmx])6(.+)?$", r"\1\2-p6\3", path.stem) # 假设 path.stem 是 "123n6example"，经过替换后，new_stem 将变为 "123n-p6example"。
         LOGGER.warning(f"WARNING ⚠️ Ultralytics YOLO P6 models now use -p6 suffix. Renaming {path.stem} to {new_stem}.")
         path = path.with_name(new_stem + path.suffix)
-
+    # 修改文件路径字符串，将其格式从 "{数字}{字母}{其他内容}" 改为 "{数字}{其他内容}"，去掉特定位置的字母。
     unified_path = re.sub(r"(\d+)([nslmx])(.+)?$", r"\1\3", str(path))  # i.e. yolov8x.yaml -> yolov8.yaml
-    yaml_file = check_yaml(unified_path, hard=False) or check_yaml(path)
+    # 检查yaml文件是否存在，首先搜索整个项目中的同名文件，如果hard=True，有多个同名文件，则报错。否则，返回所有同名文件中的第一个。
+    yaml_file = check_yaml(unified_path, hard=False) or check_yaml(path) 
+    # 加载yaml模型配置文件
     d = yaml_load(yaml_file)  # model dict
     d["scale"] = guess_model_scale(path)
     d["yaml_file"] = str(path)

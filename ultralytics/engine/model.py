@@ -28,47 +28,46 @@ from ultralytics.utils import (
 
 class Model(nn.Module):
     """
-    A base class for implementing YOLO models, unifying APIs across different model types.
 
-    This class provides a common interface for various operations related to YOLO models, such as training,
-    validation, prediction, exporting, and benchmarking. It handles different types of models, including those
-    loaded from local files, Ultralytics HUB, or Triton Server.
+    实现 YOLO 模型的基类，统一不同模型类型的 API。
 
-    Attributes:
-        callbacks (Dict): A dictionary of callback functions for various events during model operations.
-        predictor (BasePredictor): The predictor object used for making predictions.
-        model (nn.Module): The underlying PyTorch model.
-        trainer (BaseTrainer): The trainer object used for training the model.
-        ckpt (Dict): The checkpoint data if the model is loaded from a *.pt file.
-        cfg (str): The configuration of the model if loaded from a *.yaml file.
-        ckpt_path (str): The path to the checkpoint file.
-        overrides (Dict): A dictionary of overrides for model configuration.
-        metrics (Dict): The latest training/validation metrics.
-        session (HUBTrainingSession): The Ultralytics HUB session, if applicable.
-        task (str): The type of task the model is intended for.
-        model_name (str): The name of the model.
+    这个类为与 YOLO 模型相关的各种操作提供了一个通用接口，例如训练、验证、预测、导出和基准测试。它处理不同类型的模型，包括从本地文件、Ultralytics HUB 或 Triton Server 加载的模型。
 
-    Methods:
-        __call__: Alias for the predict method, enabling the model instance to be callable.
-        _new: Initializes a new model based on a configuration file.
-        _load: Loads a model from a checkpoint file.
-        _check_is_pytorch_model: Ensures that the model is a PyTorch model.
-        reset_weights: Resets the model's weights to their initial state.
-        load: Loads model weights from a specified file.
-        save: Saves the current state of the model to a file.
-        info: Logs or returns information about the model.
-        fuse: Fuses Conv2d and BatchNorm2d layers for optimized inference.
-        predict: Performs object detection predictions.
-        track: Performs object tracking.
-        val: Validates the model on a dataset.
-        benchmark: Benchmarks the model on various export formats.
-        export: Exports the model to different formats.
-        train: Trains the model on a dataset.
-        tune: Performs hyperparameter tuning.
-        _apply: Applies a function to the model's tensors.
-        add_callback: Adds a callback function for an event.
-        clear_callback: Clears all callbacks for an event.
-        reset_callbacks: Resets all callbacks to their default functions.
+    ### 属性：
+    - `callbacks (Dict)`: 用于模型操作期间各种事件的回调函数字典。
+    - `predictor (BasePredictor)`: 用于进行预测的预测器对象。
+    - `model (nn.Module)`: 底层的 PyTorch 模型。
+    - `trainer (BaseTrainer)`: 用于训练模型的训练器对象。
+    - `ckpt (Dict)`: 如果模型是从 *.pt 文件加载的，则为检查点数据。
+    - `cfg (str)`: 如果模型是从 *.yaml 文件加载的，则为模型配置。
+    - `ckpt_path (str)`: 检查点文件的路径。
+    - `overrides (Dict)`: 模型配置的覆盖字典。
+    - `metrics (Dict)`: 最新的训练/验证指标。
+    - `session (HUBTrainingSession)`: Ultralytics HUB 会话（如果适用）。
+    - `task (str)`: 模型的任务类型。
+    - `model_name (str)`: 模型的名称。
+
+    ### 方法：
+    - `__call__`: 预测方法的别名，使模型实例可调用。
+    - `_new`: 基于配置文件初始化新模型。
+    - `_load`: 从检查点文件加载模型。
+    - `_check_is_pytorch_model`: 确保模型是 PyTorch 模型。
+    - `reset_weights`: 将模型的权重重置为初始状态。
+    - `load`: 从指定文件加载模型权重。
+    - `save`: 将模型的当前状态保存到文件。
+    - `info`: 记录或返回模型的信息。
+    - `fuse`: 融合 Conv2d 和 BatchNorm2d 层以优化推理。
+    - `predict`: 执行目标检测预测。
+    - `track`: 执行目标跟踪。
+    - `val`: 在数据集上验证模型。
+    - `benchmark`: 在各种导出格式上对模型进行基准测试。
+    - `export`: 将模型导出为不同格式。
+    - `train`: 在数据集上训练模型。
+    - `tune`: 执行超参数调优。
+    - `_apply`: 将函数应用于模型的张量。
+    - `add_callback`: 为事件添加回调函数。
+    - `clear_callback`: 清除事件的所有回调。
+    - `reset_callbacks`: 将所有回调重置为默认函数。
 
     Examples:
         >>> from ultralytics import YOLO
@@ -86,24 +85,21 @@ class Model(nn.Module):
         verbose: bool = False,
     ) -> None:
         """
-        Initializes a new instance of the YOLO model class.
+        初始化 YOLO 模型类的新实例。
 
-        This constructor sets up the model based on the provided model path or name. It handles various types of
-        model sources, including local files, Ultralytics HUB models, and Triton Server models. The method
-        initializes several important attributes of the model and prepares it for operations like training,
-        prediction, or export.
+        这个构造函数根据提供的模型路径或名称设置模型。它处理各种类型的模型来源，包括本地文件、Ultralytics HUB 
+        模型和 Triton Server 模型。该方法初始化了模型的几个重要属性，并为训练、预测或导出等操作做好准备。
 
-        Args:
-            model (Union[str, Path]): Path or name of the model to load or create. Can be a local file path, a
-                model name from Ultralytics HUB, or a Triton Server model.
-            task (str | None): The task type associated with the YOLO model, specifying its application domain.
-            verbose (bool): If True, enables verbose output during the model's initialization and subsequent
-                operations.
-
-        Raises:
-            FileNotFoundError: If the specified model file does not exist or is inaccessible.
-            ValueError: If the model file or configuration is invalid or unsupported.
-            ImportError: If required dependencies for specific model types (like HUB SDK) are not installed.
+        参数：
+        model (Union[str, Path]): 要加载或创建的模型的路径或名称。可以是本地文件路径、Ultralytics HUB 的模型名称或 
+                                    Triton Server 模型。
+        task (str | None): 与 YOLO 模型相关联的任务类型，指定其应用领域。
+        verbose (bool): 如果为 True，则在模型初始化和后续操作期间启用详细输出。
+        
+        异常：
+        FileNotFoundError: 如果指定的模型文件不存在或无法访问。
+        ValueError: 如果模型文件或配置无效或不受支持。
+        ImportError: 如果未安装特定模型类型所需的依赖项（例如 HUB SDK）。
 
         Examples:
             >>> model = Model("yolo11n.pt")
@@ -124,23 +120,11 @@ class Model(nn.Module):
         self.task = task  # task type
         model = str(model).strip()
 
-        # Check if Ultralytics HUB model from https://hub.ultralytics.com
-        if self.is_hub_model(model):
-            # Fetch model from HUB
-            checks.check_requirements("hub-sdk>=0.0.12")
-            session = HUBTrainingSession.create_session(model)
-            model = session.model_file
-            if session.train_args:  # training sent from HUB
-                self.session = session
-
-        # Check if Triton Server model
-        elif self.is_triton_model(model):
-            self.model_name = self.model = model
-            return
-
         # Load or create new YOLO model
+        # 1.传入的model是以.yaml结尾的配置文件
         if Path(model).suffix in {".yaml", ".yml"}:
             self._new(model, task=task, verbose=verbose)
+        # 2.传入的是.pt离线模型权重文件
         else:
             self._load(model, task=task)
 
@@ -175,60 +159,11 @@ class Model(nn.Module):
         """
         return self.predict(source, stream, **kwargs)
 
-    @staticmethod
-    def is_triton_model(model: str) -> bool:
-        """
-        Checks if the given model string is a Triton Server URL.
-
-        This static method determines whether the provided model string represents a valid Triton Server URL by
-        parsing its components using urllib.parse.urlsplit().
-
-        Args:
-            model (str): The model string to be checked.
-
-        Returns:
-            (bool): True if the model string is a valid Triton Server URL, False otherwise.
-
-        Examples:
-            >>> Model.is_triton_model("http://localhost:8000/v2/models/yolov8n")
-            True
-            >>> Model.is_triton_model("yolo11n.pt")
-            False
-        """
-        from urllib.parse import urlsplit
-
-        url = urlsplit(model)
-        return url.netloc and url.path and url.scheme in {"http", "grpc"}
-
-    @staticmethod
-    def is_hub_model(model: str) -> bool:
-        """
-        Check if the provided model is an Ultralytics HUB model.
-
-        This static method determines whether the given model string represents a valid Ultralytics HUB model
-        identifier.
-
-        Args:
-            model (str): The model string to check.
-
-        Returns:
-            (bool): True if the model is a valid Ultralytics HUB model, False otherwise.
-
-        Examples:
-            >>> Model.is_hub_model("https://hub.ultralytics.com/models/MODEL")
-            True
-            >>> Model.is_hub_model("yolo11n.pt")
-            False
-        """
-        return model.startswith(f"{HUB_WEB_ROOT}/models/")
-
     def _new(self, cfg: str, task=None, model=None, verbose=False) -> None:
         """
-        Initializes a new model and infers the task type from the model definitions.
+        初始化新模型并从模型定义中推断任务类型。
 
-        This method creates a new model instance based on the provided configuration file. It loads the model
-        configuration, infers the task type if not specified, and initializes the model using the appropriate
-        class from the task map.
+        此方法基于提供的配置文件创建一个新的模型实例。它加载模型配置，如果未指定任务类型则推断任务类型，并使用任务映射中的适当类初始化模型。
 
         Args:
             cfg (str): Path to the model configuration file in YAML format.
@@ -247,10 +182,11 @@ class Model(nn.Module):
         """
         cfg_dict = yaml_model_load(cfg)
         self.cfg = cfg
-        self.task = task or guess_model_task(cfg_dict)
+        self.task = task or guess_model_task(cfg_dict) # detect，classify，segment，pose, obb之一
+        # 调用task_map 如self.model = DetectioModel(这是一个类)
         self.model = (model or self._smart_load("model"))(cfg_dict, verbose=verbose and RANK == -1)  # build model
-        self.overrides["model"] = self.cfg
-        self.overrides["task"] = self.task
+        self.overrides["model"] = self.cfg # yaml文件
+        self.overrides["task"] = self.task # detect
 
         # Below added to allow export from YAMLs
         self.model.args = {**DEFAULT_CFG_DICT, **self.overrides}  # combine default and model args (prefer model args)
@@ -263,7 +199,9 @@ class Model(nn.Module):
 
         This method handles loading models from either .pt checkpoint files or other weight file formats. It sets
         up the model, task, and related attributes based on the loaded weights.
+        从检查点文件加载模型或从权重文件初始化模型。
 
+        此方法负责从 .pt 检查点文件或其他权重文件格式加载模型。它根据加载的权重设置模型、任务和相关属性。
         Args:
             weights (str): Path to the model weights file to be loaded.
             task (str | None): The task associated with the model. If None, it will be inferred from the model.
@@ -748,6 +686,13 @@ class Model(nn.Module):
         When using Ultralytics HUB, if the session has a loaded model, the method prioritizes HUB training
         arguments and warns if local arguments are provided. It checks for pip updates and combines default
         configurations, method-specific defaults, and user-provided arguments to configure the training process.
+        使用指定的数据集和训练配置训练模型。
+
+        此方法通过一系列可定制的设置来促进模型训练。它支持使用自定义训练器或默认训练方法进行训练。该方法处理诸如从检查点恢复训练、
+        与 Ultralytics HUB 集成以及在训练后更新模型和配置等场景。
+
+        在使用 Ultralytics HUB 时，如果会话中已加载模型，该方法优先使用 HUB 的训练参数，并在提供本地参数时发出警告。它会检查 
+        pip 更新，并结合默认配置、方法特定的默认设置和用户提供的参数来配置训练过程。
 
         Args:
             trainer (BaseTrainer | None): Custom trainer instance for model training. If None, uses default.
@@ -780,7 +725,7 @@ class Model(nn.Module):
                 LOGGER.warning("WARNING ⚠️ using HUB training arguments, ignoring local training arguments.")
             kwargs = self.session.train_args  # overwrite kwargs
 
-        checks.check_pip_update_available()
+        # checks.check_pip_update_available()
 
         overrides = yaml_load(checks.check_yaml(kwargs["cfg"])) if kwargs.get("cfg") else self.overrides
         custom = {
@@ -1068,6 +1013,10 @@ class Model(nn.Module):
         This method dynamically selects and returns the correct module (model, trainer, validator, or predictor)
         based on the current task of the model and the provided key. It uses the task_map attribute to determine
         the correct module to load.
+        根据模型任务加载适当的模块。
+
+        此方法根据模型的当前任务和提供的键动态选择并返回正确的模块（模型、训练器、验证器或预测器）。
+        它使用 task_map 属性来确定要加载的正确模块。
 
         Args:
             key (str): The type of module to load. Must be one of 'model', 'trainer', 'validator', or 'predictor'.
@@ -1087,7 +1036,7 @@ class Model(nn.Module):
             - This method is typically used internally by other methods of the Model class.
             - The task_map attribute should be properly initialized with the correct mappings for each task.
         """
-        try:
+        try: # eg: self.task_map["detect"]["model"]
             return self.task_map[self.task][key]
         except Exception as e:
             name = self.__class__.__name__

@@ -519,8 +519,9 @@ def check_file(file, suffix="", download=True, download_dir=".", hard=True):
         files = glob.glob(str(ROOT / "**" / file), recursive=True) or glob.glob(str(ROOT.parent / file))  # find file
         if not files and hard:
             raise FileNotFoundError(f"'{file}' does not exist")
-        elif len(files) > 1 and hard:
+        elif len(files) > 1 and hard: # 多个同名文件情况，如果设置hard=True，则报错，必须只能有一个同名文件
             raise FileNotFoundError(f"Multiple files match '{file}', specify exact path: {files}")
+        # 如果有多个同名文件，hard=False，则只返回第一个文件
         return files[0] if len(files) else []  # return file
 
 

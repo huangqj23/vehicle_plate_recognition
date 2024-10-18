@@ -475,12 +475,21 @@ def yaml_load(file="data.yaml", append_filename=False):
 
     Returns:
         (dict): YAML data and file name.
+    特殊字符：
+        ^: 表示取反，即匹配不在指定范围内的字符。
+        \x09, \x0A, \x0D: 分别代表制表符（Tab）、换行符（Line Feed）、回车符（Carriage Return）。
+        \x20-\x7E: 匹配从空格（ ）到波浪号（~）之间的所有可打印ASCII字符。
+        \x85: 匹配下一行（Next Line）字符。
+        \xA0-\uD7FF: 匹配从不间断空格（Non-Breaking Space）到 \uD7FF 的所有字符。
+        \uE000-\uFFFD: 匹配从 \uE000 到 \uFFFD 的所有字符。
+        \U00010000-\U0010ffff: 匹配从 \U00010000 到 \U0010FFFF 的所有字符（包括补充字符）。
     """
     assert Path(file).suffix in {".yaml", ".yml"}, f"Attempting to load non-YAML file {file} with yaml_load()"
     with open(file, errors="ignore", encoding="utf-8") as f:
         s = f.read()  # string
 
         # Remove special characters
+        # 移除字符串 s 中的所有特殊字符，仅保留指定范围内的可打印字符。
         if not s.isprintable():
             s = re.sub(r"[^\x09\x0A\x0D\x20-\x7E\x85\xA0-\uD7FF\uE000-\uFFFD\U00010000-\U0010ffff]+", "", s)
 
