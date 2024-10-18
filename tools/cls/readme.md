@@ -12,34 +12,33 @@
 
 Train YOLO11n-cls on the MNIST160 dataset for 100 [epochs](https://www.ultralytics.com/glossary/epoch) at image size 64. For a full list of available arguments see the [Configuration](../usage/cfg.md) page.
 
-!!! example
 
-    === "Python"
+Python命令：
 
-        ```python
-        from ultralytics import YOLO
+```python
+from ultralytics import YOLO
 
-        # Load a model
-        model = YOLO("yolo11n-cls.yaml")  # build a new model from YAML
-        model = YOLO("yolo11n-cls.pt")  # load a pretrained model (recommended for training)
-        model = YOLO("yolo11n-cls.yaml").load("yolo11n-cls.pt")  # build from YAML and transfer weights
+# Load a model
+model = YOLO("yolo11n-cls.yaml")  # build a new model from YAML
+model = YOLO("yolo11n-cls.pt")  # load a pretrained model (recommended for training)
+model = YOLO("yolo11n-cls.yaml").load("yolo11n-cls.pt")  # build from YAML and transfer weights
 
-        # Train the model
-        results = model.train(data="mnist160", epochs=100, imgsz=64)
-        ```
+# Train the model
+results = model.train(data="mnist160", epochs=100, imgsz=64)
+```
 
-    === "CLI"
+CLI命令：
 
-        ```bash
-        # Build a new model from YAML and start training from scratch
-        yolo classify train data=mnist160 model=yolo11n-cls.yaml epochs=100 imgsz=64
+```bash
+# Build a new model from YAML and start training from scratch
+yolo classify train data=mnist160 model=yolo11n-cls.yaml epochs=100 imgsz=64
 
-        # Start training from a pretrained *.pt model
-        yolo classify train data=mnist160 model=yolo11n-cls.pt epochs=100 imgsz=64
+# Start training from a pretrained *.pt model
+yolo classify train data=mnist160 model=yolo11n-cls.pt epochs=100 imgsz=64
 
-        # Build a new model from YAML, transfer pretrained weights to it and start training
-        yolo classify train data=mnist160 model=yolo11n-cls.yaml pretrained=yolo11n-cls.pt epochs=100 imgsz=64
-        ```
+# Build a new model from YAML, transfer pretrained weights to it and start training
+yolo classify train data=mnist160 model=yolo11n-cls.yaml pretrained=yolo11n-cls.pt epochs=100 imgsz=64
+```
 
 ### 数据格式
 
@@ -49,55 +48,51 @@ YOLO classification dataset format can be found in detail in the [Dataset Guide]
 
 Validate trained YOLO11n-cls model [accuracy](https://www.ultralytics.com/glossary/accuracy) on the MNIST160 dataset. No arguments are needed as the `model` retains its training `data` and arguments as model attributes.
 
-!!! example
+Python命令：
 
-    === "Python"
+```python
+from ultralytics import YOLO
 
-        ```python
-        from ultralytics import YOLO
+# Load a model
+model = YOLO("yolo11n-cls.pt")  # load an official model
+model = YOLO("path/to/best.pt")  # load a custom model
 
-        # Load a model
-        model = YOLO("yolo11n-cls.pt")  # load an official model
-        model = YOLO("path/to/best.pt")  # load a custom model
+# Validate the model
+metrics = model.val()  # no arguments needed, dataset and settings remembered
+metrics.top1  # top1 accuracy
+metrics.top5  # top5 accuracy
+```
 
-        # Validate the model
-        metrics = model.val()  # no arguments needed, dataset and settings remembered
-        metrics.top1  # top1 accuracy
-        metrics.top5  # top5 accuracy
-        ```
 
-    === "CLI"
-
-        ```bash
-        yolo classify val model=yolo11n-cls.pt  # val official model
-        yolo classify val model=path/to/best.pt  # val custom model
-        ```
+CLI命令：
+```bash
+yolo classify val model=yolo11n-cls.pt  # val official model
+yolo classify val model=path/to/best.pt  # val custom model
+```
 
 ## 预测
 
 Use a trained YOLO11n-cls model to run predictions on images.
 
-!!! example
+Python命令：
 
-    === "Python"
+```python
+from ultralytics import YOLO
 
-        ```python
-        from ultralytics import YOLO
+# Load a model
+model = YOLO("yolo11n-cls.pt")  # load an official model
+model = YOLO("path/to/best.pt")  # load a custom model
 
-        # Load a model
-        model = YOLO("yolo11n-cls.pt")  # load an official model
-        model = YOLO("path/to/best.pt")  # load a custom model
+# Predict with the model
+results = model("https://ultralytics.com/images/bus.jpg")  # predict on an image
+```
 
-        # Predict with the model
-        results = model("https://ultralytics.com/images/bus.jpg")  # predict on an image
-        ```
+CLI命令：
 
-    === "CLI"
-
-        ```bash
-        yolo classify predict model=yolo11n-cls.pt source='https://ultralytics.com/images/bus.jpg'  # predict with official model
-        yolo classify predict model=path/to/best.pt source='https://ultralytics.com/images/bus.jpg'  # predict with custom model
-        ```
+```bash
+yolo classify predict model=yolo11n-cls.pt source='https://ultralytics.com/images/bus.jpg'  # predict with official model
+yolo classify predict model=path/to/best.pt source='https://ultralytics.com/images/bus.jpg'  # predict with custom model
+```
 
 See full `predict` mode details in the [Predict](../modes/predict.md) page.
 
