@@ -1,7 +1,7 @@
 ## 数据集
 RSD46-WHU是一个用于遥感图像场景分类的大规模开放数据集。该数据集从谷歌地球和天地图收集而来。大多数类别的地面分辨率为0.5米，其他类别约为2米。每个类别包含500-3000张图像。RSD46-WHU数据集包含117,000张图像，共46个类别。
 <div align='center'>
-    <img src='https://github.com/RSIA-LIESMARS-WHU/RSD46-WHU/raw/master/dataset2.jpg' width='600' height='400' />
+    <img src='https://github.com/RSIA-LIESMARS-WHU/RSD46-WHU/raw/master/dataset2.jpg' width='800' height='400' />
 </div>
 
 ## 类别信息
